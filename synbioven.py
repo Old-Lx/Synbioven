@@ -5,15 +5,35 @@ from Bio import SeqIO
 #Nótese que apenas estoy empezando a usar esta librería, cualquier
 #recomendación será bien recibida
 
-def com_fasta(archivo):
+#Esta función guarda un archivo fasta con las secuencias repetidas
+def recon_rep(archivo):
     print("Ejecutando...")
     secs=list(SeqIO.parse(archivo, "fasta"))
-    with open("sec_sin_rep.fasta", "w") as new_fasta:
-        for sec_n in secs:
-            for ind_2, adn_2 in enumerate(SeqIO.parse(archivo, "fasta")):
-                if len(secs)!=ind_2:
-                    if sec_n.seq==adn_2[ind_2+1]:
-                        SeqIO.write(adn_2, new_fasta, "fasta")
+    with open("sec_rep.fasta", "w") as new_fasta:    
+        n=1
+        for adn_2 in SeqIO.parse(archivo, "fasta"):
+            for sec_n in secs[n:]:
+                if sec_n.seq==adn_2.seq:
+                    SeqIO.write(sec_n, new_fasta, "fasta")
+                print(n)
+            n=n+1
+            if len(secs)==n:
+                break
+
+#Esta función guarda un nuevo fasta con los mismos elementos que el original
+#pero excluyendo las secuencias repetidas que guardamos con recon_rep donde arc_comp es
+#el archivo completo y arc_sec_rep es el archivo con las secuencias que están repetidas
+def elim_rep(arc_comp, arc_sec_rep):
+    print("Ejecutando...")
+    secs=list(SeqIO.parse(arc_comp, "fasta"))
+    with open(arc_sec_rep) as reps:    
+        for ind in len(secs)-1:
+            with open("sec_sin_rep.fasta", "w") as n_fasta:
+                if secs[ind].seq!=reps[ind]:
+                    SeqIO.write(secs[ind], n_fasta, "fasta")
+
+            
+
 
 
 #Función usada para dividir todas las secuencias de un archivo
@@ -32,7 +52,8 @@ def div_fasta(archivo):
 
 if __name__ == '__main__':
     div_fasta("Lemna_minor.fasta")
-    com_fasta("Lemna_minor.fasta")
+    recon_rep("Lemna_minor.fasta")
+    elim_rep(str(), str())
 
 #antes de publicar, hay que citar a los autores de biopython
 #y a los cursos que lo explican en español
