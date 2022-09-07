@@ -11,14 +11,19 @@ def recon_rep(archivo):
     secs=list(SeqIO.parse(archivo, "fasta"))
     with open("sec_rep.fasta", "w") as new_fasta:    
         n=1
+        rep_id=[]
         for adn_2 in SeqIO.parse(archivo, "fasta"):
             for sec_n in secs[n:]:
                 if sec_n.seq==adn_2.seq:
-                    SeqIO.write(sec_n, new_fasta, "fasta")
+                    rep_id[n]=sec_n.id
                 print(n)
             n=n+1
             if len(secs)==n:
                 break
+        for adn_2 in SeqIO.parse(archivo, "fasta"):
+            for id in rep_id:
+                if adn_2.id==id:
+                    SeqIO.write(adn_2, new_fasta, "fasta")
 
 #Esta función guarda un nuevo fasta con los mismos elementos que el original
 #pero excluyendo las secuencias repetidas que guardamos con recon_rep donde arc_comp es
